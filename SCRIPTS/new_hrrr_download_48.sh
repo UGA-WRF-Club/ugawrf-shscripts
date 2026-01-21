@@ -14,7 +14,7 @@ echo "downloading HRRR for $date"
 
 download_hrrr() {
     local cycle=$1
-    for i in {3..27}; do
+    for i in {0..48}; do
         f_hour=$(printf "%02d" $i)
         url="https://nomads.ncep.noaa.gov/pub/data/nccf/com/hrrr/prod/hrrr.$date/conus/hrrr.t${cycle}z.wrfprsf${f_hour}.grib2"
         wget -nv "$url" &
