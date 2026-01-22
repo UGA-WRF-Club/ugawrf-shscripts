@@ -34,23 +34,26 @@ else
 fi
 
 
-sed -i "6s/.*/ start_year                          = $start_year, $start_year, $start_year,/" namelist.input
-sed -i "7s/.*/ start_month                         = $start_month, $start_month, $start_month,/" namelist.input
-sed -i "8s/.*/ start_day                           = $start_day, $start_day, $start_day,/" namelist.input
-sed -i "9s/.*/ start_hour                          = $start_hour, $start_hour, $start_hour,/" namelist.input
-sed -i "10s/.*/ end_year                            = $end_year, $end_year, $end_year,/" namelist.input
-sed -i "11s/.*/ end_month                           = $end_month, $end_month, $end_month,/" namelist.input
-sed -i "12s/.*/ end_day                             = $end_day, $end_day, $end_day,/" namelist.input
-sed -i "13s/.*/ end_hour                            = $end_hour,  $end_hour, $end_hour,/" namelist.input
 
-sed -i "48s/.*/ num_metgrid_levels                  = 41,/" namelist.input
-sed -i "49s/.*/ num_metgrid_soil_levels             = 9,/" namelist.input
+sed -i "s/^\s*start_year\s*=.*/ start_year                          = $start_year, $start_year, $start_year,/" namelist.input
+sed -i "s/^\s*start_month\s*=.*/ start_month                         = $start_month, $start_month, $start_month,/" namelist.input
+sed -i "s/^\s*start_day\s*=.*/ start_day                           = $start_day, $start_day, $start_day,/" namelist.input
+sed -i "s/^\s*start_hour\s*=.*/ start_hour                          = $start_hour, $start_hour, $start_hour,/" namelist.input
+sed -i "s/^\s*end_year\s*=.*/ end_year                            = $end_year, $end_year, $end_year,/" namelist.input
+sed -i "s/^\s*end_month\s*=.*/ end_month                           = $end_month, $end_month, $end_month,/" namelist.input
+sed -i "s/^\s*end_day\s*=.*/ end_day                             = $end_day, $end_day, $end_day,/" namelist.input
+sed -i "s/^\s*end_hour\s*=.*/ end_hour                            = $end_hour,  $end_hour, $end_hour,/" namelist.input
+sed -i "s/^\s*num_metgrid_levels\s*=.*/ num_metgrid_levels                  = 41,/" namelist.input
+sed -i "s/^\s*num_metgrid_soil_levels\s*=.*/ num_metgrid_soil_levels             = 9,/" namelist.input
+sed -i "s/^\s*frames_per_outfile\s*=.*/ frames_per_outfile                  = 1, 1, 1,/" namelist.input
+
 
 cd 
 cd /hdd/WRF/WPS-4.6.0/
 
+sed -i "s/^\s*start_date\s*=.*/ start_date = '$start_year-$start_month-${start_day}_$start_hour:00:00','$start_year-$start_month-${start_day}_$start_hour:00:00', '$start_year-$start_month-${start_day}_$start_hour:00:00', /" namelist.wps
+sed -i "s/^\s*end_date\s*=.*/ end_date   = '$end_year-$end_month-${end_day}_$end_hour:00:00','$end_year-$end_month-${end_day}_$end_hour:00:00', '$end_year-$end_month-${end_day}_$end_hour:00:00',/" namelist.wps
 
-sed -i "4s/.*/ start_date = '$start_year-$start_month-${start_day}_$start_hour:00:00','$start_year-$start_month-${start_day}_$start_hour:00:00', '$start_year-$start_month-${start_day}_$start_hour:00:00', /" namelist.wps
-sed -i "5s/.*/ end_date   = '$end_year-$end_month-${end_day}_$end_hour:00:00','$end_year-$end_month-${end_day}_$end_hour:00:00', '$end_year-$end_month-${end_day}_$end_hour:00:00',/" namelist.wps
+cd
 
 cd
