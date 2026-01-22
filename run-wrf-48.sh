@@ -47,6 +47,8 @@ WRF_DIR="/hdd/WRF/WRFV4.6.1/run"
 cd
 cd $WRF_DIR
 
+rm wrfout_*
+
 ln -sf /hdd/WRF/WPS-4.6.0/met_em* .
 
 mpiexec -np 48 ./real.exe
@@ -55,9 +57,7 @@ mpiexec -np 48 ./real.exe
 watchdog() {
     source /opt/conda/etc/profile.d/conda.sh
     echo "starting the partial watchdog!"
-    mkdir -p processed_logs
     touch processed_list.txt
-
     while pgrep -x "wrf.exe" > /dev/null || [ -n "$(ls wrfout_d01_* 2>/dev/null | grep -vFf processed_list.txt)" ]; do
         files=$(ls wrfout_d01_* 2>/dev/null | sort)
         latest_file=$(echo "$files" | tail -n 1)
@@ -67,10 +67,10 @@ watchdog() {
                 echo "completed hour: $f"
                 conda run -n ugawrf_postproc --live-stream python /hdd/WRF/ugawrf-py/ugawrf.py $WRF_DIR/$f /hdd/ugawrf-py/outputs -r 14 -p
                 echo "$f" >> processed_list.txt
-                gsutil -m cp /hdd/ugawrf-py/outputs/* gs://uga-wrf-website/outputs &
+                gsutil -m cp -n -r /hdd/ugawrf-py/outputs/* gs://uga-wrf-website/outputs &
             fi
         done
-        sleep 30
+        sleep 300
     done
 }
 watchdog &
@@ -100,9 +100,10 @@ wait
 
 
 #### OUTPUT WRF FILES TO CLOUD BUCKET ####
-gsutil mv $WRF_DIR/$FIRST_FILE gs://wrf-bucket/wrf-outputs &
-gsutil -m mv /hdd/ugawrf-py/outputs/* gs://uga-wrf-website/outputs &
+gsutil cp $WRF_DIR/$FIRST_FILE gs://wrf-bucket/wrf-outputs &
+gsutil -m cp -n -r /hdd/ugawrf-py/outputs/* gs://uga-wrf-website/outputs &
 wait
+rm -rf /hdd/ugawrf-py/outputs/*
 
 echo "wrf run reached end of shell script, probably finished"
 date
